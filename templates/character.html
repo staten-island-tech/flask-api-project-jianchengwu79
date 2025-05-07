@@ -1,0 +1,26 @@
+<head>
+    <meta charset="UTF-8">
+    <title>Genshin Project</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+</head>
+
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>{{ name.title() }}</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+</head>
+<body>
+    <div class="container mt-5 text-center">
+        <h1>{{ name.title() }}</h1>
+        <img src="{{ image }}" alt="{{ name }}" class="img-fluid mb-3" style="max-width: 200px;">
+        <div class="card p-3 mx-auto" style="max-width: 400px;">
+            <p><strong>Title:</strong> {{ data['title'] }}</p>
+            <p><strong>Vision:</strong> {{ data['vision'] }}</p>
+            <p><strong>Weapon:</strong> {{ data['weapon'] }}</p>
+        </div>
+        <a href="/" class="btn btn-secondary mt-3">Back to Home</a>
+    </div>
+</body>
+</html>
