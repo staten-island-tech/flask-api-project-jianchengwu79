@@ -1,75 +1,56 @@
-from flask import Flask, render_template
+from flask import Flask, render_template, request, redirect, url_for
 import requests
 
 app = Flask(__name__)
 
-API_BASE = "https://genshin.jmp.blue"
-
-# Home page: list of characters
-@app.route("/")
-def index():
+# Helper function to fetch data from the Jikan API
+def fetch_anime_data(endpoint):
     try:
-        response = requests.get(f"{API_BASE}/characters", timeout=5)
-        response.raise_for_status()
-        slugs = response.json()
-        print(f"Found {len(slugs)} character slugs.")
+        response = requests.get(f'https://api.jikan.moe/v4/{endpoint}')
+        response.raise_for_status()  # Raise an exception for 4xx/5xx errors
+        return response.json()['data']
     except requests.exceptions.RequestException as e:
-        print(f"Error fetching character list: {e}")
-        return "Error loading character list. Please try again later.", 500
+        print(f"Error fetching data: {e}")
+        return None
 
-    characters = []
+# Home route: Display top anime
+@app.route('/')
+def home():
+    anime_list = fetch_anime_data('top/anime')
+    if anime_list:
+        return render_template('index.html', anime_list=anime_list)
+    return render_template('404.html')
 
-    for slug in slugs:
-        try:
-            char_response = requests.get(f"{API_BASE}/characters/{slug}", timeout=3)
-            char_response.raise_for_status()
-            char = char_response.json()
-            print(f"Fetched {slug}")
+# Search route: Display anime search results
+@app.route('/search')
+def search():
+    query = request.args.get('query')
+    if query:
+        search_results = fetch_anime_data(f'anime?q={query}&limit=10')
+        if search_results:
+            return render_template('search_results.html', query=query, anime_list=search_results)
+    return redirect(url_for('home'))
 
-            # Try 'card' image, fallback to 'icon'
-            images = char.get('images', {})
-            image_url = images.get('card') or images.get('icon')
+# Anime details route (dynamic route)
+@app.route('/anime/<int:anime_id>')
+def anime_detail(anime_id):
+    anime = fetch_anime_data(f'anime/{anime_id}')
+    if anime:
+        return render_template('anime_detail.html', anime=anime[0])
+    return render_template('404.html')
 
-            if not image_url:
-                print(f"⚠️ No image found for: {slug}")
-                continue
+# Genre route: Filter by genre (optional)
+@app.route('/genre/<int:genre_id>')
+def genre_filter(genre_id):
+    genre_anime = fetch_anime_data(f'anime?genres={genre_id}')
+    if genre_anime:
+        return render_template('search_results.html', anime_list=genre_anime)
+    return render_template('404.html')
 
-            characters.append({
-                'slug': slug,
-                'name': char.get('name', slug.title()),
-                'image': image_url
-            })
-        except Exception as e:
-            print(f"Error loading character '{slug}': {e}")
-            continue
+# Custom error handler for 404
+@app.errorhandler(404)
+def page_not_found(e):
+    return render_template('404.html'), 404
 
-    print(f"Total characters loaded: {len(characters)}")
-    return render_template("index.html", characters=characters)
-
-
-# Character detail page
-@app.route("/character/<slug>")
-def character_detail(slug):
-    try:
-        response = requests.get(f"{API_BASE}/characters/{slug}", timeout=5)
-        response.raise_for_status()
-        data = response.json()
-    except requests.exceptions.RequestException as e:
-        print(f"Error fetching character '{slug}': {e}")
-        return f"Error loading character: {slug}", 500
-
-    return render_template("character.html", character={
-        'name': data.get('name', slug.title()),
-        'slug': slug,
-        'image': data['images']['card'],  # You can choose another image type if you prefer
-        'vision': data.get('vision', 'Unknown'),
-        'weapon': data.get('weapon', 'Unknown'),
-        'nation': data.get('nation', 'Unknown'),
-        'affiliation': data.get('affiliation', 'Unknown'),
-        'birthday': data.get('birthday', 'Unknown'),
-        'rarity': data.get('rarity', '?'),
-        'description': data.get('description', 'No description available.')
-    })
-
-if __name__ == "__main__":
+if __name__ == '__main__':
     app.run(debug=True)
