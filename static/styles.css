@@ -1,12 +1,14 @@
-body {
-    background-color: #f8f9fa;
-}
-
-.card {
-    border: none;
-    transition: transform 0.2s ease-in-out;
-}
+/* static/styles.css */
 
 .card:hover {
-    transform: scale(1.05);
+    transform: translateY(-5px);
+    transition: 0.3s ease-in-out;
+}
+
+body {
+    scroll-behavior: smooth;
+}
+
+footer {
+    border-top: 1px solid rgba(255, 255, 255, 0.1);
 }

@@ -1,18 +1,39 @@
-{% extends 'layout.html' %}
-
+<!-- templates/search_results.html -->
+{% extends "layout.html" %}
+{% block title %}Search Results{% endblock %}
 {% block content %}
-    <h1>Search Results for "{{ query }}"</h1>
-    <div class="row">
+<h2 class="mb-4">Search Results for "{{ query }}"</h2>
+<div class="row row-cols-1 row-cols-md-3 g-4">
+    {% for anime in anime_list %}
+    <div class="col">
+        <div class="card h-100">
+            <img src="{{ anime.images.jpg.image_url }}" class="card-img-top" alt="{{ anime.title }}">
+            <div class="card-body">
+                <h5 class="card-title">{{ anime.title }}</h5>
+                <p class="card-text">{{ anime.synopsis[:100] }}...</p>
+                <a href="{{ url_for('anime_detail', anime_id=anime.mal_id) }}" class="btn btn-primary">Details</a>
+            </div>
+        </div>
+    </div>
+    {% endfor %}
+</div>
+{% endblock %}
+
+{% if anime_list %}
+    <div class="row row-cols-1 row-cols-md-3 g-4">
         {% for anime in anime_list %}
-            <div class="col-md-4">
-                <div class="card mb-4">
-                    <img src="{{ anime.images.jpg.image_url }}" class="card-img-top" alt="{{ anime.title }}">
-                    <div class="card-body">
-                        <h5 class="card-title">{{ anime.title }}</h5>
-                        <a href="{{ url_for('anime_detail', anime_id=anime.mal_id) }}" class="btn btn-primary">View Details</a>
-                    </div>
+        <div class="col">
+            <div class="card h-100">
+                <img src="{{ anime.images.jpg.image_url }}" class="card-img-top" alt="{{ anime.title }}">
+                <div class="card-body">
+                    <h5 class="card-title">{{ anime.title }}</h5>
+                    <a href="{{ url_for('anime_detail', anime_id=anime.mal_id) }}" class="btn btn-primary">Details</a>
                 </div>
             </div>
+        </div>
         {% endfor %}
     </div>
-{% endblock %}
+{% else %}
+    <p class="text-muted">No results found for "{{ query }}".</p>
+{% endif %}
+

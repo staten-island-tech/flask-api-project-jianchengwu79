@@ -1,20 +1,24 @@
-{% extends 'layout.html' %}
-
+<!-- templates/anime_detail.html -->
+{% extends "layout.html" %}
+{% block title %}{{ anime.title }}{% endblock %}
 {% block content %}
-    <h1>{{ anime.title }}</h1>
-    <div class="row">
+<div class="card mb-4">
+    <div class="row g-0">
         <div class="col-md-4">
-            <img src="{{ anime.images.jpg.image_url }}" class="img-fluid" alt="{{ anime.title }}">
+            <img src="{{ anime.images.jpg.image_url }}" class="img-fluid rounded-start" alt="{{ anime.title }}">
         </div>
         <div class="col-md-8">
-            <h4>Genres: 
-                {% for genre in anime.genres %}
-                    <span class="badge bg-primary">{{ genre.name }}</span>
-                {% endfor %}
-            </h4>
-            <p><strong>Episodes:</strong> {{ anime.episodes }}</p>
-            <p><strong>Rating:</strong> {{ anime.rating }}</p>
-            <p><strong>Synopsis:</strong> {{ anime.synopsis }}</p>
+            <div class="card-body">
+                <h2 class="card-title">{{ anime.title }}</h2>
+                <p class="card-text">{{ anime.synopsis }}</p>
+                <ul>
+                    <li><strong>Episodes:</strong> {{ anime.episodes }}</li>
+                    <li><strong>Score:</strong> {{ anime.score }}</li>
+                    <li><strong>Status:</strong> {{ anime.status }}</li>
+                </ul>
+                <a href="{{ anime.url }}" target="_blank" class="btn btn-outline-primary">View on MyAnimeList</a>
+            </div>
         </div>
     </div>
+</div>
 {% endblock %}
