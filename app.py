@@ -10,7 +10,7 @@ def fetch_anime_data(endpoint):
         response.raise_for_status()
         json_data = response.json()
 
-        # Defensive: return empty list if 'data' is missing or None
+ 
         return json_data.get('data', [])
     except requests.exceptions.RequestException as e:
         print(f"[API Error] {e}")
@@ -39,7 +39,7 @@ def search():
 def anime_detail(anime_id):
     anime = fetch_anime_data(f'anime/{anime_id}')
     if anime:
-        return render_template('anime_detail.html', anime=anime)  # No [0] here
+        return render_template('anime_detail.html', anime=anime) 
     return render_template('404.html')
 
 
