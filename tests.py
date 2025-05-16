@@ -1,10 +1,10 @@
 import requests
 
-url = "https://jikan.moe/"
-response = requests.get(url)
+def fetch_anime_data(endpoint):
+    response = requests.get(f'https://api.jikan.moe/v4/{endpoint}')
+    response.raise_for_status()
+    json_data = response.json()
 
-if response.status_code == 200:
-    print("API is working")
-    print(response.json())
-else:
-    print("Failed to fetch data:", response.status_code)
+    if json_data()
+
+
