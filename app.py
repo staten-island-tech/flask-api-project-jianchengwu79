@@ -39,7 +39,7 @@ def search():
 def anime_detail(anime_id):
     anime = fetch_anime_data(f'anime/{anime_id}')
     if anime:
-        return render_template('anime_detail.html', anime=anime) 
+        return render_template('anime_detail.html', anime=anime)                   
     return render_template('404.html')
 
 
